@@ -37,3 +37,4 @@ API ⽹关是微服务架构中⼀个不可或缺的部分。 API ⽹关是对�
 2. [Manage your Web API with an API Gateway](http://www.ippon.tech/blog/api-gateway/)
 3. [Mashape开源API网关——Kong](http://www.infoq.com/cn/news/2015/04/kong/)
 4. [Are there any open source API Gateways?](https://www.quora.com/Are-there-any-open-source-API-Gateways)
+5. [Taking A Fresh Look At What Open Source API Management Architecture Is Available](https://apievangelist.com/2014/10/05/taking-a-fresh-look-at-what-open-source-api-management-architecture-is-available/)
