@@ -14,6 +14,68 @@ API ⽹关是微服务架构中⼀个不可或缺的部分。 API ⽹关是对�
 
 [Github地址](https://github.com/Mashape/kong)  nginx + lua
 
+当前版本：Kong 0.9.5 [文档](https://getkong.org/docs/) 
+
+#### 启动测试
+
+可以采用dock方式快速启动测试, 由于过程中需要连接到外网，因此需要有网络连接和科学上网。
+
+	# git clone https://github.com/Mashape/docker-kong.git
+	# cd docker-kong/compose
+	# docker-compose up 
+	  。。。。。
+	  
+	# curl http://127.0.0.1:8001
+	返回json格式的网关信息
+	
+
+#### 添加API
+	
+	curl -i -X POST \
+  		--url http://localhost:8001/apis/ \
+  		--data 'name=baidu' \
+  		--data 'upstream_url=http://www.baidu.com/' \
+  		--data 'request_host=www.baidu.com'
+  		
+  	返回结果：
+  	
+  	{
+    	"upstream_url":"http://www.baidu.com/",
+    	"created_at":1481521300000,
+    	"id":"fe5f3e33-e877-4aff-83ca-f55addee8eec",
+   		 "name":"baidu",
+    	"preserve_host":false,
+    	"strip_request_path":false,
+    	"request_host":"www.baidu.com"
+	}
+
+		
+#### 测试添加的API	
+ 
+  	curl -i -X GET  \
+  		--url http://localhost:8000/  \
+  		--header 'Host: www.baidu.com'
+  		
+#### 查看添加的相关信息
+
+	# http://127.0.0.1:8001/apis/
+	{
+		data: [
+			{
+				upstream_url: "http://www.baidu.com/",
+				created_at: 1481521300000,
+				id: "fe5f3e33-e877-4aff-83ca-f55addee8eec",
+				name: "baidu",
+				preserve_host: false,
+				strip_request_path: false,
+				request_host: "www.baidu.com"
+			}
+		],
+
+		total: 1
+	}
+	
+
 ### 2.3 apiaxle
 
 [官网](http://apiaxle.com/)  node.js
