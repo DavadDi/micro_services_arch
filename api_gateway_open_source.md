@@ -8,7 +8,7 @@ API ⽹关是微服务架构中⼀个不可或缺的部分。 API ⽹关是对�
 
 ### 2.1 Tyk
 
-[Github地址](https://github.com/TykTechnologies/tyk)  go
+[Github地址](https://github.com/TykTechnologies/tyk)  go  有企业版和社区版
 
 [Docker安装测试](https://tyk.io/tyk-documentation/get-started/with-tyk-on-premise/installation/docker/docker-quickstart/)
 
@@ -98,7 +98,9 @@ API ⽹关是微服务架构中⼀个不可或缺的部分。 API ⽹关是对�
 [GitHub地址](https://github.com/Netflix/zuul)
 
 ### 2.6 WSO2 API Manager 
-[官网](http://wso2.com/products/api-manager/)
+[官网](http://wso2.com/products/api-manager/) OpenSource， Java
+
+![架构](http://b.content.wso2.com/sites/all/product-pages/images/apim-overview.png)
 
 ### 2.7 clydeio
 
@@ -115,3 +117,4 @@ API ⽹关是微服务架构中⼀个不可或缺的部分。 API ⽹关是对�
 4. [Are there any open source API Gateways?](https://www.quora.com/Are-there-any-open-source-API-Gateways)
 5. [Taking A Fresh Look At What Open Source API Management Architecture Is Available](https://apievangelist.com/2014/10/05/taking-a-fresh-look-at-what-open-source-api-management-architecture-is-available/)
 6. [How Mashape Manages Over 15,000 APIs & Microservices](https://stackshare.io/mashape/how-mashape-manages-over-15000-apis-and-microservices)
+7. [Get Kong折騰筆記](http://cocoaspice.logdown.com/posts/424513-getkong-toss-notes)
