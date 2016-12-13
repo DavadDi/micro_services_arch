@@ -10,9 +10,11 @@ API ⽹关是微服务架构中⼀个不可或缺的部分。 API ⽹关是对�
 
 [Github地址](https://github.com/TykTechnologies/tyk)  go
 
+[Docker安装测试](https://tyk.io/tyk-documentation/get-started/with-tyk-on-premise/installation/docker/docker-quickstart/)
+
 ### 2.2 kong
 
-[Github地址](https://github.com/Mashape/kong)  nginx + lua
+[Github地址](https://github.com/Mashape/kong)  nginx + lua (openresty)
 
 当前版本：Kong 0.9.5 [文档](https://getkong.org/docs/) 
 
@@ -74,24 +76,36 @@ API ⽹关是微服务架构中⼀个不可或缺的部分。 API ⽹关是对�
 
 		total: 1
 	}
-	
 
-### 2.3 apiaxle
+### 2.3 api-umbrella
+
+[官网](https://apiumbrella.io/) nginx + lua (openresty) 
+
+[Github地址](https://github.com/NREL/api-umbrella)
+
+[apiumbrella分析--Revisiting, speeding up, and simplifying API Umbrella's architecture](https://github.com/NREL/api-umbrella/issues/86)
+
+[apiumbralla同类产品分析](https://github.com/NREL/api-umbrella/issues/159)
+
+### 2.4 apiaxle
 
 [官网](http://apiaxle.com/)  node.js
 
 [Github地址](https://github.com/apiaxle/apiaxle)
 
-### 2.4 Netflix zuul
+### 2.5 Netflix zuul
 
 [GitHub地址](https://github.com/Netflix/zuul)
 
-### 2.5 WSO2 API Manager 
+### 2.6 WSO2 API Manager 
 [官网](http://wso2.com/products/api-manager/)
 
-### 2.6 apiumbrella
+### 2.7 clydeio
 
-[官网](https://apiumbrella.io/)
+
+[Github](https://github.com/clydeio/clydeio)  node.js 貌似更新不频繁
+
+
 
 
 ## 参考资料
@@ -100,3 +114,4 @@ API ⽹关是微服务架构中⼀个不可或缺的部分。 API ⽹关是对�
 3. [Mashape开源API网关——Kong](http://www.infoq.com/cn/news/2015/04/kong/)
 4. [Are there any open source API Gateways?](https://www.quora.com/Are-there-any-open-source-API-Gateways)
 5. [Taking A Fresh Look At What Open Source API Management Architecture Is Available](https://apievangelist.com/2014/10/05/taking-a-fresh-look-at-what-open-source-api-management-architecture-is-available/)
+6. [How Mashape Manages Over 15,000 APIs & Microservices](https://stackshare.io/mashape/how-mashape-manages-over-15000-apis-and-microservices)
