@@ -836,3 +836,50 @@ Link:
 * [Docker Registry HTTP API V2](https://docs.docker.com/registry/spec/api/)
 * [开启docker之旅](http://blog.suconghou.cn/post/using-docker/)
 * [Docker rReference](https://docs.docker.com/reference/)
+
+
+
+## 5.3 Create New Image
+
+update: 2017.04.24
+
+
+	$ cat Dockerfile
+	FROM busybox
+	
+	ADD hello.txt /
+	
+	$cat hello.txt
+	hello
+
+	$ docker build -t busybox:v1.0 .
+	
+	$ docker images
+	busybox                     v1.0                7dbf4402b79c        13 minutes ago      1.11 MB
+
+
+
+	|-- imagedb
+	|   |-- content
+	|   |   `-- sha256
+	|   |       |-- 00f017a8c2a6e1fe2ffd05c281f27d069d2a99323a8cd514dd35f228ba26d2ff
+	|   |       `-- 7dbf4402b79c68a58c11d2343f6bd59a22ee52980b3f5d5be29990fa49426bbc  新增加，镜像id
+	|   `-- metadata
+	|       `-- sha256
+	|           `-- 7dbf4402b79c68a58c11d2343f6bd59a22ee52980b3f5d5be29990fa49426bbc
+	|               `-- parent  [sha256:00f017a8c2a6e1fe2ffd05c281f27d069d2a99323a8cd514dd35f228ba26d2ff]
+	
+	
+	|-- layerdb
+	|   |-- sha256
+	|   |   |-- 3e1127ba68b26d89fe62c41714bb5ff55a73cc58f8caa399156c074642646ae5 CHAIN_ID
+	|   |   |   |-- cache-id [22c2ea6bd5847202f9c959538aced6b49ecaa963a72ac8a535c4003375a3a2db]
+	|   |   |   |-- diff [sha256:794b01691d296c35552ed723fcdc865625149137a7f19f565fed5b123919687f] DIFFID
+	|   |   |   |-- parent [sha256:c0de73ac99683640bc8f8de5cda9e0e2fc97fe53d78c9fd60ea69b31303efbc9] PARENT CHAINID
+	|   |   |   |-- size
+	|   |   |   `-- tar-split.json.gz
+	
+	
+	3e1127ba68b26d89fe62c41714bb5ff55a73cc58f8caa399156c074642646ae5 
+	= sha256((parent_chainid) + " " + diffid) 
+	= sha256("sha256:c0de73ac99683640bc8f8de5cda9e0e2fc97fe53d78c9fd60ea69b31303efbc9 sha256:794b01691d296c35552ed723fcdc865625149137a7f19f565fed5b123919687f")
