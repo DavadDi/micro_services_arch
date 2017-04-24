@@ -175,12 +175,13 @@ tree /var/lib/docker/
 |       |-- imagedb
 |       |   |-- content
 |       |   |   `-- sha256   [IMAGE ID] ①  文件包含了 image json数据，详见下文 SHA256 hash of its configuration JSON
+|       |   |      、      该文件名称为内容的 sha256sum 值，可以通过linux   sha256sum 命令进行验证
 |       |   |       `-- 00f017a8c2a6e1fe2ffd05c281f27d069d2a99323a8cd514dd35f228ba26d2ff
 |       |   `-- metadata
 |       |       `-- sha256
 |       |-- layerdb
 |       |   |-- sha256   [Layer ID --> v2metadata-by-diffid]
-|       |   |   `-- c0de73ac99683640bc8f8de5cda9e0e2fc97fe53d78c9fd60ea69b31303efbc9  ④
+|       |   |   `-- c0de73ac99683640bc8f8de5cda9e0e2fc97fe53d78c9fd60ea69b31303efbc9 ④ [ChainID] 只有一层等于 Layer DiffID 否则 ChainID(layerN) = SHA256hex(ChainID(layerN-1) + " " + DiffID(layerN))
 |       |   |       |-- cache-id ⑤ [ccb47fc4077d37cb1c22c1db317b014347807d3cb5d41e2437a623788b438f5e]
 |       |   |       |-- diff [sha256:c0de73ac99683640bc8f8de5cda9e0e2fc97fe53d78c9fd60ea69b31303efbc9]
 |       |   |       |-- size [1109996]
