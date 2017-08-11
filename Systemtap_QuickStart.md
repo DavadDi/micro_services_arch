@@ -324,6 +324,8 @@ A number of operators exist for such basic context variable expressions:
   expands to a string with all of $var's members and submembers, equivalent to`sprintf("{.a=%i, .b=%u, .c={.x=%p, .y=%c}, .d=[%i, ...]}",        $EXPR->a, $EXPR->b, $EXPR->c->x, $EXPR->c->y, $EXPR->d[0])`
 
 
+> 对于 $$vars 和 $$parms 可以通过添加 suffix  `$` 或者 `$$` 打印出对应结构体中详细的信息。
+
 
 return:
 
@@ -524,9 +526,6 @@ function <name>:<type> ( <arg1>:<type>, ... ) %{ <C_stmts> %}
 ```
 
 
-
-
-
 Using a single `$` or a double `$$` suffix provides a swallow or deep string representation of the variable data type. Using a single `$`, as in `$var$`, will provide a string that only includes the values of all basic type values of fields of the variable structure type but not any nested complex type values (which will be represented with `{...}`). Using a double `$$`, as in `@var("var")$$` will provide a string that also includes all values of nested data types.
 
 `$$vars` expands to a character string that is equivalent to `sprintf("parm1=%x ... parmN=%x var1=%x ... varN=%x", $parm1, ..., $parmN, $var1, ..., $varN)`
@@ -534,9 +533,6 @@ Using a single `$` or a double `$$` suffix provides a swallow or deep string rep
 `$$locals` expands to a character string that is equivalent to `sprintf("var1=%x ... varN=%x", $var1, ..., $varN)`
 
 `$$parms` expands to a character string that is equivalent to `sprintf("parm1=%x ... parmN=%x", $parm1, ..., $parmN)`
-
-
-
 
 
 源码目录：`/usr/src/debug/kernel-3.10.0-514.el7/linux-3.10.0-514.el7.x86_64/`
@@ -560,7 +556,6 @@ probe netdev.receive
 }
 ```
 
- 
 
 [who_send_it.stp](https://sourceware.org/systemtap/examples/network/who_sent_it.stp)
 
@@ -880,11 +875,126 @@ probe kernel.function("tcp_set_state")
 
 
 
+样例演示如何从 `struct file *`中获取 `file_name` 参考 [systemtap targets](https://zhengheng.me/2015/02/11/systemtap-targets/)
+
+```shell
+probe kernel.function("vfs_read").return
+{
+	if(execname() != "stapio")
+		printf("%s[%ld], %ld, %s %s\n", execname(), pid(), $file->f_path->dentry->d_inode->i_ino, kernel_string($file->f_path->dentry->d_name->name), kernel_string($file->f_path->dentry->d_iname))
+}
+probe timer.s(2)
+{
+	exit()
+}
+```
+
+
+
+可选 与尝试 probepoint
+
+? 定义可选探测点，! 定义尝试探测点。可选探测点就是即使不能在这里设置探测点就不报错了而直接忽略这个探测点。尝试探测点是前面探测点设置失败之后再尝试设置后面的探测点。
+
+
+
+跟踪 `process`的 `statement`
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+typedef struct _str
+{
+	int len;
+	const char *data;
+} str_t;
+
+typedef struct _student
+{
+	int   id;
+	str_t name;
+} student_t;
+
+
+int main()
+{
+	student_t *ptr = NULL;
+	student_t  one;
+
+	one.id = 1;
+	one.name.len = (int)strlen("dave");
+	one.name.data = "dave";
+
+	ptr = &one;
+
+	printf("%d -> %s\n", ptr->id, ptr->name.data);
+
+	ptr->id = 2;
+	ptr->name.len = (int)strlen("davad");
+	ptr->name.data = "davad";
+	printf("%d -> %s\n", ptr->id, ptr->name.data);
+
+	return 0;
+}
+
+```
+
+
+
+```shell
+# gcc -o ptr -O2 -g ptr.c
+```
+
+```shell
+ # stap -L 'process("/root/stp/ptr").statement("main@ptr.c:*")'
+```
+
+```shell
+#!/usr/bin/env stap
+
+probe process("/root/stp/ptr").statement("main@ptr.c:28")
+{
+	printf("vars %s, student name: %s\n", $$locals$$, user_string($ptr->name->data));
+}
+```
+
+```shell
+# stp ptr.stp -c ./ptr
+1 -> dave
+2 -> davad
+vars one={.id=1, .name={.len=4, .data="dave"}} ptr={.id=1, .name={.len=4, .data="dave"}}, student name: dave
+```
+
+通过 `stap` 脚本修改变量测试
+
+```shell
+# cat ptr_modify.ptr
+#!/usr/bin/env stap
+
+probe process("/root/stp/ptr").statement("main@ptr.c:28")
+{
+	$ptr->name->len = 7;
+	printf("vars %s, student name: %s\n", $$locals$$, user_string($ptr->name->data));
+}
+```
+
+如果需要修改某个变量的值，需要添加 `-g` 参数运行。
+```shell
+# stap -g ptr_modify.ptr -c ./ptr
+1 -> dave
+2 -> davad
+vars one={.id=1, .name={.len=7, .data="dave"}} ptr={.id=1, .name={.len=7, .data="dave"}}, student name: dave
+```
+
+
+
 生成火焰图：
+
+[unkown] 编译的时候添加 `-g -fno-omit-frame-pointer`
 
 ```
 # git clone https://github.com/brendangregg/FlameGraph.git
-# perf record -F 99 -p pid -g -- sleep 60
+# perf record -F 99 -p pid -ag -- sleep 60
 # perf script > out.perf
 # /opt/FlameGraph/stackcollapse-perf.pl out.perf > out.folded
 # /opt/FlameGraph/flamegraph.pl out.folded > cpu.svg
@@ -911,14 +1021,18 @@ $ sudo stap -DMAXMAPENTRIES=10240 test.stp
 9. [systemtap的网络监控脚本](http://m.blog.itpub.net/15480802/viewspace-762002/)
 10. [Go 火焰图](http://lihaoquan.me/2017/1/1/Profiling-and-Optimizing-Go-using-go-torch.html)
 11. [工欲性能调优，必先利其器（2）- 火焰图](https://pingcap.com/blog-tangliu-tool-%7C%7C-zh)
-12. [OpenRestry火焰图](https://moonbingbing.gitbooks.io/openresty-best-practices/flame_graph.html)
-13. Perf 相关资料 
+12. [OpenRestry火焰图](https://moonbingbing.gitbooks.io/openresty-best-practices/flame_graph.html)  [openresty-systemtap-toolkit](https://github.com/openresty/openresty-systemtap-toolkit)
+13. [各个版本的Linux kernel](http://elixir.free-electrons.com/linux/latest/source)
+14. [ 用 perf 和 SystemTap 跟踪 MongoDB 访问超时](https://zhuanlan.zhihu.com/p/22572231)
+15. Perf 相关资料 
     * [perf example](http://www.brendangregg.com/perf.html)
     * [Perf -- Linux下的系统性能调优工具，第 1 部分](https://www.ibm.com/developerworks/cn/linux/l-cn-perf1/index.html)
     * [Perf -- Linux下的系统性能调优工具，第 2 部分](https://www.ibm.com/developerworks/cn/linux/l-cn-perf2/index.html)
     * [**perf-tools**](https://github.com/brendangregg/perf-tools)
-14. [动态追踪技术漫谈](https://openresty.org/posts/dynamic-tracing/)
-15. [Architecture of systemtap: a Linux trace/probe tool](https://sourceware.org/systemtap/archpaper.pdf)
+16. [动态追踪技术漫谈](https://openresty.org/posts/dynamic-tracing/)
+17. [Architecture of systemtap: a Linux trace/probe tool](https://sourceware.org/systemtap/archpaper.pdf)
+18. [SystemTap使用技巧【一】](http://blog.csdn.net/wangzuxi/article/details/42849053)
+19. [SystemTap使用技巧【二】](http://blog.csdn.net/wangzuxi/article/details/42976577)
 
 
 
