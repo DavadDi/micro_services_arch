@@ -34,7 +34,7 @@
 3. 等待重试，系统繁忙 http500
 
 
-![2](img/consistency_ compensation.jpg)
+![2](img/consistency_compensation.jpg)
 
 备注： 因为补偿模式确定补偿范围的复杂性和资源不具备隔离性，因此应当从业务层面给予规避，尽量提供出其他备选方案而不是进行补偿。
 
