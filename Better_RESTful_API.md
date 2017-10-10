@@ -121,6 +121,35 @@ Link: <https://xxx/api/v1/cars?offset=15&limit=5>; rel="next",
 <https://xxx/api/v1/cars?offset=5&limit=5>; rel="prev",
 ```
 
+Google API开发中对于分页的处理方式如下https://cloud.google.com/apis/design/design_patterns：
+
+对于所有的**List**操作都应该支持分页，即使当前的结果集数量非常小，因为对于API添加分页功能的支持也是一个 **behavior-breaking**的修改。在**List**操作中增加如下定义字段：
+
+* page_token (string)  字段出现在 List 方法的请求消息中，表明客户端请求的具体页数的数据的结果，该字段的内容必须是url-safe的base64编码，如果包含敏感数据则应该进行加密，服务端必须保证被篡改page_token不能够访问到不是预期暴露的数据：
+  * require query parameters to be respecifed on follow up requests
+  * only reference server-side session state in the page token
+  * encrypt and sign the query parameters in the page token and revalidate and reauthorize these parameters on every call
+* total_size (int32)
+* page_size (int32)，如果 page_size == 0， 则由服务端决定返回的数目，当然服务端也可能有自己的限制条件，比如比 page_size 更小；
+* next_page_token (string) 字段出现在 List 方法的 Response Message中，代表下一页数据的 Token，如果该字段为空 “”， 则表明没有后续的数据；
+
+```json
+rpc ListBooks(ListBooksRequest) returns (ListBooksResponse);
+
+message ListBooksRequest {
+  string name = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+}
+
+message ListBooksResponse {
+  repeated Book books = 1;
+  string next_page_token = 2;
+}
+```
+
+
+
 ## 5. API 版本号
 
 版本号放在url中，方便与日志收集后的过滤，同时版本号用整数， v1、v2， 不采用 v2.5的方式
@@ -257,3 +286,4 @@ RFC 6585 中 [429 Too Many Requests](http://tools.ietf.org/html/rfc6585#section-
 * [XML API vs JSON API](http://www.google.com/trends/explore?q=xml+api#q=xml%20api%2C%20json%20api&cmpt=q)
 * [Architectural Styles andthe Design of Network-based Software Architectures](http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm)
 * [RESTful Service Best Practices](www.restapitutorial.com/media/RESTful_Best_Practices-v1_0.pdf)
+* [Richardson Maturity Model](https://martinfowler.com/articles/richardsonMaturityModel.html)
