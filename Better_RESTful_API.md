@@ -121,6 +121,8 @@ Link: <https://xxx/api/v1/cars?offset=15&limit=5>; rel="next",
 <https://xxx/api/v1/cars?offset=5&limit=5>; rel="prev",
 ```
 
+[Github Traversing with Pagination](https://developer.github.com/v3/guides/traversing-with-pagination/)
+
 Google API开发中对于分页的处理方式如下https://cloud.google.com/apis/design/design_patterns：
 
 对于所有的**List**操作都应该支持分页，即使当前的结果集数量非常小，因为对于API添加分页功能的支持也是一个 **behavior-breaking**的修改。在**List**操作中增加如下定义字段：
@@ -260,7 +262,7 @@ message ListBooksResponse {
 
 ## 9. 输入和输出尽可能JSON格式
 
-[XML API vs JSON API](http://www.google.com/trends/explore?q=xml+api#q=xml%20api%2C%20json%20api&cmpt=q)，目前JSON API的调用已经大幅度领先于XML；尽可能返回JSON格式的数据，并保证返回的JSON格式数据具备良好的阅读性，例如默认设置参数（?pretty=true），方便与用户展示和调试；返回的JSON格式内容启用压缩功能；JSON格式推荐采用下划线分割page_size，而不是大小写格式pageSize；
+[XML API vs JSON API](http://www.google.com/trends/explore?q=xml+api#q=xml%20api%2C%20json%20api&cmpt=q)，目前JSON API的调用已经大幅度领先于XML；尽可能返回JSON格式的数据，并保证返回的JSON格式数据具备良好的阅读性，例如默认设置参数（?pretty=true），方便与用户展示和调试；返回的JSON格式内容启用压缩功能；JSON格式推荐采用下划线分割page_size，而不是大小写格式pageSize； 
 
 
 
@@ -271,6 +273,7 @@ RFC 6585 中 [429 Too Many Requests](http://tools.ietf.org/html/rfc6585#section-
 - X-Rate-Limit-Limit - The number of allowed requests in the current period
 - X-Rate-Limit-Remaining - The number of remaining requests in the current period
 - X-Rate-Limit-Reset - The number of seconds left in the current period
+
 
 ##参考资料
 
