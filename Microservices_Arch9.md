@@ -167,7 +167,7 @@ DDD(Domain-Driven Design) 将一个复杂的领域划分为多个限界上下文
 
 **Service Tests**： Mocking or Stubbing
 
-
+[“Testing Strategies in a Microservice Architecture”](https://martinfowler.com/articles/microservice-testing/)
 
 ## 参考资料
 
