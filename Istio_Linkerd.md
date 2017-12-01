@@ -1,6 +1,10 @@
-# Istio
+# Istio && Linkerd
 
-## 1. 整体架构
+[TOC]
+
+## 1. Istio
+
+### 1.1 整体架构
 
 Istio为希腊语，意思是“启航”。
 
@@ -42,7 +46,7 @@ Envoy 以 Sidecar 的方式透明部署在应用 Service 前面，为服务提�
 
 在线体验 https://www.katacoda.com/courses/istio/deploy-istio-on-kubernetes
 
-## 2. Pilot
+### 1.2 Pilot
 
 核心组件 Pilot 主要用于控制 Envoy 进行流量管控，Pilot 管理Istio服务网格中的 Envoy 代理实例。Pilot 允许指定用于在Envoy代理之间路由流量的规则和故障恢复策略如超时（Timeout），重试（Retries）和熔断器（Circuit Breakers）。
 
@@ -62,6 +66,9 @@ Pilot 的整体架构上分为 `Rules API` `Envoy API`  `Abstract Modle` 和 `Pl
 <img src="https://istio.io/docs/concepts/traffic-management/img/pilot/PilotAdapters.svg" width="600"  align=center/>
 
 **Discovery and Load Balancing**
+
+
+
 <img src="https://istio.io/docs/concepts/traffic-management/img/pilot/LoadBalancing.svg" width="500" align=center>
 
 
@@ -80,7 +87,7 @@ Pilot 作为服务发现和治理情况下，会提供 Restfule 接口供 Envoy 
 
 
 
-## Mixer
+### 1.3 Mixer
 
 Mixer 负责在服务网格上执行访问控制和使用策略，并收集Envoy代理和其他服务的遥测数据。Mixer 旨在改变层之间的界限，以减少系统复杂性，从服务代码中消除策略逻辑，并替代为让运维人员控制。
 
@@ -117,7 +124,7 @@ Adapters 为 go 的 pkg 直接链接到 Mixer 的程序内，因此创建自己�
 
 
 
-## istioctl
+### 1.4 istioctl
 
 istioctl 命令用于创建、修改、删除配置等相关的 istio 系统的资源，包括以下：
 
@@ -128,7 +135,7 @@ istioctl 命令用于创建、修改、删除配置等相关的 istio 系统的�
 
 
 
-## 部署 Bookinfos on K8S
+### 1.5 部署 Bookinfos on K8S
 
 [Install](https://istio.io/docs/guides/bookinfo.html) 手动注入方式：
 
@@ -172,7 +179,35 @@ http_proxy=$L5D_INGRESS_LB curl -s http://hello
 
 
 
-## Linkerd
+### 1.6. Proxy
+
+#### 1.6.1 Envoy
+
+> Envoy 是 Lyft 于2016年9月份开源的一种服务代理和通信总线，已用于生产系统中，"管理了上万台虚拟机间的一百多个服务，每秒可处理近两百万次请求”。在近期的GlueCon 2017大会上，来自IBM的Shriram Rajagopalan和来自Google的Louis Ryan介绍了 Istio 的 [技术细节](https://istio.io/talks/istio_talk_gluecon_2017.pdf)（PDF）。
+
+#### 1.6.2 Linderd
+
+Linderd 可以作为 Proxy 与 Istio 集成，当然也可以作为单独的产品与 Istio 同等使用。
+
+#### 1.6.3 nginmesh
+
+NGINX [nginmesh](https://github.com/nginmesh/nginmesh) Istio 服务代理模块：为 NGINX Web 服务本身采用的是 Golang 编写而不是 C ，与作为 sidecar 模式运行的开源 NGINX 集成，并声称 ”占用的空间很小，具备先进的负载平衡算法的高性能代理、缓存、SSL 终端、使用 Lua 和 nginScript 的脚本功能、以及具备细粒度访问控制的各种安全功能。”
+
+
+
+![nginmesh](https://res.infoq.com/news/2017/09/nginx-platform-service-mesh/zh/resources/121.png)
+
+
+
+
+
+## 2. Linkerd
+
+buoyant 公司的 blog [A SERVICE MESH FOR KUBERNETES](https://buoyant.io/2016/10/04/a-service-mesh-for-kubernetes-part-i-top-line-service-metrics/) 详细介绍了与 K8S 集成的各种步骤。
+
+Linkerd 是一个提供弹性云端原生应用服务网格的开源项目。其核心是一个透明代理，可以用它来实现一个专用的基础设施层以提供服务间的通信，进而为软件应用提供服务发现、路由、错误处理以及服务可见性等功能，而无需侵入应用内部本身的实现。
+
+
 
 Linkerd 启动后会在每个 Node 上通过 DeamonSet 起一个代理或者作为 Sidercar 的方式和程序部署在一起。通过导出 http_proxy 环境变量的方式，为Application 提供透明的代理。HelloWorld的 [yaml](https://raw.githubusercontent.com/linkerd/linkerd-examples/master/k8s-daemonset/k8s/hello-world.yml)文件。
 
@@ -367,7 +402,9 @@ http://121.196.214.67:30173/?router=outgoing
 
 http_proxy=http://121.196.214.67:31393/ curl -s http://hello
 
-# 参考
+
+
+## 3. 参考
 
 1. [Service Mesh：下一代微服务](https://mp.weixin.qq.com/s?__biz=MzA3MDg4Nzc2NQ==&mid=2652136254&idx=1&sn=bba9bbd24ac8e5c1f6ef5d1125a6975b&chksm=84d53304b3a2ba12f88675c1bf51973aa1210d174da9e6c2ddcd1f3c84ec7e25987b3bce1071&mpshare=1&scene=1&srcid=1020GPmfbEVP9QDNlZBHg47I&pass_ticket=a%2B3t43zt60SHoI6fLsq80dbx%2FKCTnp9%2Bg1DgmORXY0hwwje1mB3uFmK9f9%2BSNZ2v#rd): QCON 2017 上海站的演讲，系统介绍Service Mesh技术
 2. [ 服务网格新生代--Istio](https://mp.weixin.qq.com/s?__biz=MzA3MDg4Nzc2NQ==&mid=2652136078&idx=1&sn=b261631ffe4df0638c448b0c71497021&chksm=84d532b4b3a2bba2c1ed22a62f4845eb9b6f70f92ad9506036200f84220d9af2e28639a22045&mpshare=1&scene=1&srcid=0922JYb4MpqpQCauaT9B4Xrx&pass_ticket=F8CjNuTDg%2Fskt94bwJ%2B1yiPKpHJhaaRYpxDCqtNGMrMGkGsZDLF5EW1HCByba35u#rd): 介绍isito的文章
@@ -383,3 +420,5 @@ http_proxy=http://121.196.214.67:31393/ curl -s http://hello
 12. [Linkerd中文文档](https://linkerd.doczh.cn/doc/overview/) [官方文档](https://linkerd.io/)
 13. [A SERVICE MESH FOR KUBERNETES](https://buoyant.io/2016/10/04/a-service-mesh-for-kubernetes-part-i-top-line-service-metrics/) 介绍了Linkerd 在 k8s上的集成测试方案
 14. [CNCF Landscape](https://github.com/cncf/landscape)
+15. [Go kit for Miroservice](https://gokit.io/)
+16. [NGINX 发布微服务平台、OpenShift Ingress Controller 和Service Mesh预览版](http://www.infoq.com/cn/news/2017/09/nginx-platform-service-mesh)
